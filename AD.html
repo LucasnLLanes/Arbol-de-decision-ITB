@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Informe TP5 - Árbol de Decisión | Lucas Llanes</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background-color: #f0f2f5;
+      color: #1e293b;
+      line-height: 1.6;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+      overflow: hidden;
+    }
+    .header {
+      background: #ffffff;
+      padding: 20px 40px;
+      border-bottom: 3px solid #c9a227;
+      display: flex;
+      align-items: center;
+      min-height: 80px;
+    }
+    .header h1 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #0a2540;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin: 0 auto;
+      text-align: center;
+      line-height: 1.2;
+    }
+    .portada {
+      background: linear-gradient(135deg, #0a2540 0%, #1e3a8a 100%);
+      color: white;
+      padding: 60px 40px;
+      text-align: center;
+      position: relative;
+    }
+    .portada::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 4px;
+      background: #c9a227;
+    }
+    .portada h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+    }
+    .portada p {
+      font-size: 1.1rem;
+      opacity: 0.95;
+      margin: 5px 0;
+      font-weight: 300;
+    }
+    .portada .destacado {
+      font-weight: 700;
+      color: #c9a227;
+    }
+    .contenido { padding: 40px; }
+    .seccion {
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .seccion:last-child { border-bottom: none; margin-bottom: 0; }
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #0a2540;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    h2::before {
+      content: '';
+      display: inline-block;
+      width: 6px; height: 24px;
+      background: #c9a227;
+      border-radius: 3px;
+    }
+    h3 { font-size: 1.2rem; font-weight: 600; color: #1e3a8a; margin: 25px 0 15px 0; }
+    p { margin-bottom: 15px; color: #000000; }
+    ul, ol { margin: 15px 0 20px 20px; color: #334155; }
+    li { margin-bottom: 8px; }
+    pre {
+      background: #0a2540;
+      color: #e2e8f0;
+      padding: 20px;
+      border-radius: 10px;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      margin: 15px 0;
+      border-left: 4px solid #c9a227;
+    }
+    code {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9em;
+      color: #0a2540;
+    }
+    pre code { background: transparent; color: inherit; padding: 0; }
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin: 20px 0;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    th {
+      background: #0a2540;
+      color: #ffffff;
+      font-weight: 600;
+      text-align: left;
+      padding: 14px 16px;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 3px solid #c9a227;
+    }
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #e2e8f0;
+      background: white;
+      color: #000000;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:nth-child(even) td { background: #f8fafc; }
+    .nota {
+      background: #eff6ff;
+      border-left: 4px solid #1e3a8a;
+      padding: 15px 20px;
+      border-radius: 0 8px 8px 0;
+      margin: 15px 0;
+      font-size: 0.95rem;
+      color: #1e293b;
+    }
+    .nota strong { color: #0a2540; }
+    .alerta {
+      background: #fef2f2;
+      border-left: 4px solid #b91c1c;
+      padding: 15px 20px;
+      border-radius: 0 8px 8px 0;
+      margin: 15px 0;
+      font-size: 0.95rem;
+      color: #1e293b;
+    }
+    .alerta strong { color: #7f1d1d; }
+    .grid-metricas {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+    .metrica {
+      background: linear-gradient(135deg, #0a2540 0%, #1e3a8a 100%);
+      color: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(10, 37, 64, 0.2);
+    }
+    .metrica .valor {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #c9a227;
+      display: block;
+      line-height: 1.2;
+    }
+    .metrica .etiqueta {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      margin-top: 5px;
+      display: block;
+    }
+    .figura {
+      margin: 25px 0;
+      text-align: center;
+    }
+    .figura img {
+      max-width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e2e8f0;
+    }
+    .figura .caption {
+      font-size: 0.9rem;
+      color: #64748b;
+      margin-top: 10px;
+      font-style: italic;
+    }
+    .footer {
+      text-align: center;
+      padding: 20px;
+      background: #0a2540;
+      color: #c9a227;
+      font-size: 0.85rem;
+      border-top: 3px solid #c9a227;
+    }
+    @media (max-width: 768px) {
+      .contenido, .portada { padding: 20px; }
+      .portada h1 { font-size: 1.6rem; }
+      th, td { padding: 10px; font-size: 0.85rem; }
+      .header { flex-direction: column; gap: 15px; min-height: auto; }
+      .header h1 { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Instituto Superior de Formación Técnica N° 197</h1>
+    </div>
+
+    <div class="portada">
+      <h1>Predicción de Abandono Estudiantil con Árboles de Decisión</h1>
+      <p><span class="destacado">Materia:</span> Procesamiento de Aprendizaje Automático</p>
+      <p><span class="destacado">Docente:</span> Scudero, Yanina Ximena</p>
+      <p><span class="destacado">Alumno:</span> Lucas Nahuel Llanes</p>
+      <p><span class="destacado">Carrera:</span> Tecnicatura Superior en Ciencia de Datos e Inteligencia Artificial</p>
+      <p><span class="destacado">Año:</span> 2026</p>
+    </div>
+
+    <div class="contenido">
+
+      <div class="seccion">
+        <h2>1. Introducción</h2>
+        <p>El presente informe documenta la aplicación de un <strong>Árbol de Decisión</strong> para predecir el abandono de estudiantes en carreras terciarias. El objetivo es identificar tempranamente a los estudiantes con mayor riesgo de desertar, para que la institución pueda implementar estrategias de acompañamiento focalizadas.</p>
+        <p>El trabajo se compone de dos partes: el <strong>script Python (<code>AD.py</code>)</strong> que implementa todo el pipeline, y este <strong>informe HTML</strong> que documenta el código, los resultados y las visualizaciones generadas.</p>
+      </div>
+
+      <div class="seccion">
+        <h2>2. Descripción del Dataset</h2>
+        <p>El dataset contiene información histórica de <strong>100 estudiantes</strong> con las siguientes variables:</p>
+        <ul>
+          <li><strong>Edad:</strong> edad del estudiante en años.</li>
+          <li><strong>Género:</strong> femenino / masculino.</li>
+          <li><strong>Carrera:</strong> carrera terciaria en la que está inscripto.</li>
+          <li><strong>Promedio:</strong> promedio del primer cuatrimestre.</li>
+          <li><strong>Aprobadas:</strong> cantidad de materias aprobadas.</li>
+          <li><strong>Desaprobadas:</strong> cantidad de materias desaprobadas.</li>
+          <li><strong>Asistencia:</strong> asistencia promedio (%).</li>
+          <li><strong>Trabaja:</strong> si el estudiante trabaja (Sí/No).</li>
+          <li><strong>Distancia_km:</strong> distancia desde el domicilio al instituto.</li>
+          <li><strong>Actividades_Extra:</strong> participación en actividades extracurriculares.</li>
+          <li><strong>Estado_Final (objetivo):</strong> Abandonó / Continúa.</li>
+        </ul>
+
+        <h3>Distribución de la variable objetivo</h3>
+        <div class="grid-metricas">
+          <div class="metrica">
+            <span class="valor">54%</span>
+            <span class="etiqueta">Abandonó (54)</span>
+          </div>
+          <div class="metrica">
+            <span class="valor">46%</span>
+            <span class="etiqueta">Continúa (46)</span>
+          </div>
+          <div class="metrica">
+            <span class="valor">0.9954</span>
+            <span class="etiqueta">Entropía original</span>
+          </div>
+          <div class="metrica">
+            <span class="valor">100</span>
+            <span class="etiqueta">Registros totales</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="seccion">
+        <h2>3. Estructura del Script <code>AD.py</code></h2>
+        <p>El script se organiza en 6 bloques principales, más funciones auxiliares:</p>
+        <ol>
+          <li><strong>Carga y preparación:</strong> lectura de Excel, renombrado, limpieza y One-Hot Encoding.</li>
+          <li><strong>División y entrenamiento:</strong> <code>train_test_split</code> estratificado 70/30 + <code>DecisionTreeClassifier</code>.</li>
+          <li><strong>Evaluación:</strong> accuracy, matriz de confusión y reporte de clasificación.</li>
+          <li><strong>Interpretación:</strong> importancia de variables y reglas del árbol.</li>
+          <li><strong>Estabilidad:</strong> prueba con 5 divisiones distintas para verificar si las importancias se sostienen.</li>
+          <li><strong>Predicción final:</strong> aplicación del modelo sobre los 100 estudiantes nuevos y exportación a Excel.</li>
+        </ol>
+
+        <h3>Funciones auxiliares</h3>
+        <pre><code>def localizar_planilla(palabra_clave):
+    """Busca el primer .xlsx que contenga la palabra clave."""
+    coincidencias = [f for f in glob.glob("*.xlsx")
+                     if palabra_clave.lower() in f.lower()
+                     and not f.startswith("predicciones")
+                     and not f.startswith("~$")]
+    if not coincidencias:
+        raise FileNotFoundError(f"No se encontró ningún .xlsx con '{palabra_clave}'")
+    print(f"Planilla cargada: {coincidencias[0]}")
+    return coincidencias[0]</code></pre>
+
+        <pre><code>def limpiar_y_codificar(df):
+    """Normaliza y codifica el DataFrame."""
+    df = df.rename(columns=RENOMBRE).copy()
+    for columna in ["genero", "carrera", "trabaja", "extracurriculares"]:
+        df[columna] = df[columna].astype(str).str.strip()
+    df["carrera"] = (df["carrera"]
+                     .str.replace("TÉCNICATURA", "TECNICATURA")
+                     .str.replace("TECNICATURA SUPERIOR EN ", ""))
+    df["genero"] = df["genero"].map({"m": 0, "f": 1})
+    df["trabaja"] = df["trabaja"].map({"No": 0, "Si": 1})
+    df["extracurriculares"] = df["extracurriculares"].map({"No": 0, "Si": 1})
+    if "estado_final" in df.columns:
+        df["estado_final"] = df["estado_final"].map({"Abandonó": 1, "Continúa": 0})
+    return df</code></pre>
+      </div>
+
+      <div class="seccion">
+        <h2>4. Entrenamiento del Modelo</h2>
+        <p>Se entrenó un árbol de decisión con los siguientes hiperparámetros:</p>
+        <table>
+          <thead>
+            <tr><th>Parámetro</th><th>Valor</th><th>Motivo</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>criterion</code></td><td>"gini"</td><td>Impureza de Gini como medida de división</td></tr>
+            <tr><td><code>max_depth</code></td><td>4</td><td>Árbol poco profundo, interpretable</td></tr>
+            <tr><td><code>min_samples_leaf</code></td><td>5</td><td>Evita hojas con muy pocos casos</td></tr>
+            <tr><td><code>random_state</code></td><td>42</td><td>Reproducibilidad</td></tr>
+          </tbody>
+        </table>
+
+        <pre><code>X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=RANDOM_SEED, stratify=y)
+
+arbol = DecisionTreeClassifier(
+    criterion="gini", max_depth=4, min_samples_leaf=5, random_state=RANDOM_SEED)
+arbol.fit(X_train, y_train)</code></pre>
+      </div>
+
+      <div class="seccion">
+        <h2>5. Evaluación del Modelo</h2>
+        <div class="grid-metricas">
+          <div class="metrica">
+            <span class="valor">0.80</span>
+            <span class="etiqueta">Accuracy entrenamiento</span>
+          </div>
+          <div class="metrica">
+            <span class="valor">0.50</span>
+            <span class="etiqueta">Accuracy prueba</span>
+          </div>
+          <div class="metrica">
+            <span class="valor">0.53</span>
+            <span class="etiqueta">Baseline trivial</span>
+          </div>
+          <div class="metrica">
+            <span class="valor">0.39 - 0.46</span>
+            <span class="etiqueta">CV 5-fold</span>
+          </div>
+        </div>
+
+        <div class="alerta">
+          <strong>Resultado crítico:</strong> el accuracy en prueba (0.50) es <strong>menor</strong> que el de un modelo trivial que siempre predice "Abandonó" (0.53). La gran diferencia entre entrenamiento (0.80) y prueba (0.50) indica <strong>sobreajuste</strong>.
+        </div>
+
+        <h3>Matriz de confusión</h3>
+        <div class="figura">
+          <img src="matriz_confusion.png" alt="Matriz de confusión del conjunto de prueba">
+          <p class="caption">Figura 1: Matriz de confusión — conjunto de prueba. El modelo comete errores en ambos sentidos (5 falsos positivos y 10 falsos negativos).</p>
+        </div>
+      </div>
+
+      <div class="seccion">
+        <h2>6. Interpretación del Árbol</h2>
+        <p>El árbol entrenado le asigna mayor importancia a la <strong>asistencia</strong> y la <strong>edad</strong>, seguidas por la carrera <em>Administración de Pymes</em>, <em>desaprobadas</em> y <em>promedio</em>.</p>
+
+        <table>
+          <thead>
+            <tr><th>Variable</th><th>Importancia</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>asistencia</td><td>0.325</td></tr>
+            <tr><td>edad</td><td>0.274</td></tr>
+            <tr><td>carrera: Administración de Pymes</td><td>0.151</td></tr>
+            <tr><td>desaprobadas</td><td>0.130</td></tr>
+            <tr><td>promedio</td><td>0.120</td></tr>
+          </tbody>
+        </table>
+
+        <div class="figura">
+          <img src="importancia_variables.png" alt="Importancia de las variables en el árbol">
+          <p class="caption">Figura 2: Importancia de las variables según la reducción de impureza Gini.</p>
+        </div>
+
+        <div class="figura">
+          <img src="arbol_decision.png" alt="Árbol de decisión completo">
+          <p class="caption">Figura 3: Árbol de decisión entrenado (profundidad 4). El primer corte es por <code>asistencia <= 93.16</code>.</p>
+        </div>
+      </div>
+
+      <div class="seccion">
+        <h2>7. Prueba de Estabilidad</h2>
+        <p>Para verificar si las importancias son reales o producto del azar, se repitió el entrenamiento con 5 divisiones train/test distintas:</p>
+        <table>
+          <thead>
+            <tr><th>División</th><th>Accuracy prueba</th><th>Variables principales</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>0</td><td>0.57</td><td>aprobadas, extracurriculares, edad</td></tr>
+            <tr><td>1</td><td>0.43</td><td>carrera Adm. Pymes, edad, carrera Radiología</td></tr>
+            <tr><td>2</td><td>0.33</td><td>promedio, edad, género</td></tr>
+            <tr><td>3</td><td>0.67</td><td>aprobadas, carrera Ciencia de Datos, extracurriculares</td></tr>
+            <tr><td>4</td><td>0.37</td><td>edad, promedio, asistencia</td></tr>
+          </tbody>
+        </table>
+
+        <div class="alerta">
+          <strong>Conclusión de estabilidad:</strong> la variable principal <strong>cambia en cada división</strong> y el accuracy varía entre 0.33 y 0.67 solo por cambiar qué alumnos caen en entrenamiento y cuáles en prueba. Por lo tanto, <strong>no se puede afirmar que alguna variable sea realmente predictiva del abandono con este dataset</strong>.
+        </div>
+      </div>
+
+      <div class="seccion">
+        <h2>8. Predicción Final y Exportación</h2>
+        <p>Se aplicó el modelo entrenado sobre la planilla <code>DatosFinal</code> (100 estudiantes nuevos sin etiqueta). Se generó el archivo <code>predicciones_DatosFinal.xlsx</code> con dos columnas adicionales:</p>
+        <ul>
+          <li><code>Prediccion</code>: "Abandonó" o "Continúa".</li>
+          <li><code>ProbAbandono</code>: probabilidad estimada por el árbol.</li>
+        </ul>
+        <pre><code>resultado["Prediccion"] = ["Abandonó" if p == 1 else "Continúa"
+                           for p in arbol.predict(X_nuevos)]
+resultado["ProbAbandono"] = arbol.predict_proba(X_nuevos)[:, 1].round(2)
+resultado = resultado.sort_values("ProbAbandono", ascending=False)
+resultado.to_excel("predicciones_DatosFinal.xlsx", index=False)</code></pre>
+
+        <h3>Archivos generados por el script</h3>
+        <table>
+          <thead>
+            <tr><th>Archivo</th><th>Contenido</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>matriz_confusion.png</code></td><td>Matriz de confusión del conjunto de prueba</td></tr>
+            <tr><td><code>importancia_variables.png</code></td><td>Gráfico de barras de importancias Gini</td></tr>
+            <tr><td><code>arbol_decision.png</code></td><td>Visualización completa del árbol entrenado</td></tr>
+            <tr><td><code>predicciones_DatosFinal.xlsx</code></td><td>Predicciones ordenadas por probabilidad de abandono</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="seccion">
+        <h2>9. Limitaciones y Trabajo Futuro</h2>
+        <ul>
+          <li><strong>Dataset sin señal predictiva:</strong> las medias entre clases son casi idénticas y el modelo no supera al azar.</li>
+          <li><strong>Tamaño reducido:</strong> 100 registros es un tamaño acotado; se recomienda ampliar con datos de varias cohortes.</li>
+          <li><strong>Sobreajuste:</strong> el árbol memoriza el entrenamiento (0.80) pero no generaliza (0.50 en prueba). Se podría mitigar con poda (<code>ccp_alpha</code>).</li>
+          <li><strong>Comparación de algoritmos:</strong> se probaron Random Forest y Regresión Logística con resultados similares o peores.</li>
+          <li><strong>Consideraciones éticas:</strong> cualquier sistema de alerta temprana debe usarse para acompañar, no para estigmatizar. Las predicciones <strong>no deben usarse como etiquetas definitivas</strong>.</li>
+        </ul>
+      </div>
+
+      <div class="seccion">
+        <h2>10. Conclusiones</h2>
+        <p>El árbol de decisión demostró ser una herramienta interpretable, pero en este caso <strong>no permitió predecir el abandono con una precisión mejor que el azar</strong>. El accuracy en prueba (0.50) es menor que el de un modelo trivial que siempre predice "Abandonó" (0.53), y las variables "importantes" cambian por completo al modificar la división train/test.</p>
+        <p>El valor principal del trabajo está en haber aplicado una <strong>metodología rigurosa</strong> que incluye: análisis de medias entre clases, comparación contra un modelo trivial, validación cruzada, prueba de estabilidad con múltiples divisiones, y una comunicación honesta de las limitaciones.</p>
+        <div class="nota">
+          <strong>Aprendizaje clave:</strong> un modelo con buen accuracy en entrenamiento puede ser inútil si no se lo compara con un baseline trivial y si no se verifica la estabilidad de sus resultados. La validación rigurosa es imprescindible antes de sacar conclusiones.
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>Informe generado por Lucas Nahuel Llanes — 2026</p>
+      <p>Instituto Superior de Formación Técnica N° 197</p>
+    </div>
+  </div>
+</body>
+</html>
